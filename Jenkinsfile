@@ -59,17 +59,17 @@ pipeline {
             }
         }
 
-        stage('Upload Artifact to Artifactory') {
+       stage('Upload Artifact to Artifactory') {
             steps {
                 script {
                     def server = Artifactory.server 'artifactory-server'
                     def uploadSpec = """{
                         "files": [
-                          {
-                            "pattern": "php-todo.zip",
-                            "target": "Todo-dev-local/php-todo",
-                            "props": "type=zip;status=ready"
-                          }
+                        {
+                            "pattern": "${WORKSPACE}/php-todo.zip",
+                            "target": "Todo-dev-local/php-todo/",
+                            "props": "type=zip"
+                        }
                         ]
                     }"""
                     println "Upload Spec: ${uploadSpec}"
@@ -82,7 +82,6 @@ pipeline {
                 }
             }
         }
-
         stage('Deploy to Dev Environment') {
             steps {
                 build job: 'ansibllle-config-mgt/main', parameters: [[$class: 'StringParameterValue', name: 'inventory', value: 'dev']], propagate: false, wait: true
