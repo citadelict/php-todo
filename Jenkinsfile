@@ -73,23 +73,19 @@ pipeline {
                         }"""
                         println "Upload Spec: ${uploadSpec}"
                         try {
-                            server.upload spec: uploadSpec
-                            println "Upload successful"
+                            server.upload spec: uploaul"
                         } catch (Exception e) {
-                            println "Upload failed: ${e.message}"
+                            println "Upload failed: dSpec
+                            println "Upload successf${e.message}"
                         }
                     }
                 }
             }
 
         stage('Deploy to Dev Environment') {
-            steps {
-                build job: 'ansibllle-config-mgt/main', parameters: [
-                    [$class: 'StringParameterValue', name: 'inventory', value: 'dev'],
-                    [$class: 'StringParameterValue', name: 'ansible_tags', value: 'deployment']
-                ], propagate: false, wait: true
-            }
-
+        steps {
+    build job: 'ansible-project/main', parameters: [[$class: 'StringParameterValue', name: 'env', value: 'dev']], propagate: false, wait: true
+    }
         }
     }
 }
