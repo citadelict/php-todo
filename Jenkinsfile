@@ -58,30 +58,30 @@ pipeline {
                 sh 'zip -qr php-todo.zip ${WORKSPACE}/*'
             }
         }
-
-       stage('Upload Artifact to Artifactory') {
-            steps {
-                script {
-                    def server = Artifactory.server 'artifactory-server'
-                    def uploadSpec = """{
-                        "files": [
-                        {
-                            "pattern": "${WORKSPACE}/php-todo.zip",
-                            "target": "Todo-dev-local/php-todo/",
-                            "props": "type=zip"
+        stage('Upload Artifact to Artifactory') {
+                steps {
+                    script {
+                        def server = Artifactory.server 'artifactory-server'
+                        def uploadSpec = """{
+                            "files": [
+                            {
+                                "pattern": "${WORKSPACE}/php-todo.zip",
+                                "target": "Todo-dev-local/php-todo/",
+                                "props": "type=zip;content-type=application/zip"
+                            }
+                            ]
+                        }"""
+                        println "Upload Spec: ${uploadSpec}"
+                        try {
+                            server.upload spec: uploadSpec
+                            println "Upload successful"
+                        } catch (Exception e) {
+                            println "Upload failed: ${e.message}"
                         }
-                        ]
-                    }"""
-                    println "Upload Spec: ${uploadSpec}"
-                    try {
-                        server.upload spec: uploadSpec
-                        println "Upload successful"
-                    } catch (Exception e) {
-                        println "Upload failed: ${e.message}"
                     }
                 }
             }
-        }
+
         stage('Deploy to Dev Environment') {
             steps {
                 build job: 'ansibllle-config-mgt/main', parameters: [[$class: 'StringParameterValue', name: 'inventory', value: 'dev']], propagate: false, wait: true
