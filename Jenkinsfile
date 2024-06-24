@@ -88,7 +88,7 @@ pipeline {
                 build job: 'ansibllle-config-mgt/main', 
                 parameters: [
                     [$class: 'StringParameterValue', name: 'inventory', value: 'dev'],
-                    [$class: 'StringParameterValue', name: 'ansible_tags', value: 'deployment']
+                    // [$class: 'StringParameterValue', name: 'ansible_tags', value: 'deployment']
                 ], 
                 propagate: false, 
                 wait: true
