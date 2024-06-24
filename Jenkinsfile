@@ -55,7 +55,7 @@ pipeline {
 
         stage('Package Artifact') {
             steps {
-                sh 'zip -qr php-todo.zip ${WORKSPACE}/*'
+                sh 'zip -qr php-todo.zip ${WORKSPACE}/* ${WORKSPACE}/.[!.]*'
             }
         }
 
@@ -67,7 +67,7 @@ pipeline {
                         "files": [
                             {
                                 "pattern": "php-todo.zip",
-                                "target": "Todo-dev/php-todo",
+                                "target": "Todo-dev/",
                                 "props": "type=zip;status=ready"
                             }
                         ]
