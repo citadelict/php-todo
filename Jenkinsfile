@@ -10,7 +10,7 @@ pipeline {
 
         stage('Checkout SCM') {
             steps {
-                git branch: 'main', url: 'https://github.com/citadelict/php-todo.git'
+                git branch: 'new-update', url: 'https://github.com/citadelict/php-todo.git'
             }
         }
 
