@@ -129,7 +129,7 @@ pipeline {
             }
         }
 
-        stage('SonarQube Quality Gate') {
+         stage('SonarQube Quality Gate') {
             when { branch pattern: "^develop*|^hotfix*|^release*|^main*", comparator: "REGEXP" }
             environment {
                 scannerHome = tool 'SonarQubeScanner'
@@ -145,8 +145,13 @@ pipeline {
                         waitForQualityGate abortPipeline: true
                     }
                 }
+                failure {
+                    echo "SonarQube analysis failed"
+                    error("Pipeline aborted due to SonarQube quality gate failure")
+                }
             }
         }
+
 
         stage('Package Artifact') {
             steps {
