@@ -10,7 +10,7 @@ pipeline {
 
         stage('Checkout SCM') {
             steps {
-                git branch: 'main', url: 'https://github.com/citadelict/php-todo.git'
+                git branch: 'new-update', url: 'https://github.com/citadelict/php-todo.git'
             }
         }
 
@@ -39,17 +39,116 @@ pipeline {
 
         stage('Plot Code Coverage Report') {
             steps {
-                plot csvFileName: 'plot-loc.csv', csvSeries: [[displayTableFlag: false, exclusionValues: 'Lines of Code (LOC),Comment Lines of Code (CLOC),Non-Comment Lines of Code (NCLOC),Logical Lines of Code (LLOC)', file: 'build/logs/phploc.csv', inclusionFlag: 'INCLUDE_BY_STRING', url: '']], group: 'phploc', numBuilds: '100', style: 'line', title: 'A - Lines of Code', yaxis: 'Lines of Code'
-                plot csvFileName: 'plot-structures.csv', csvSeries: [[displayTableFlag: false, exclusionValues: 'Directories,Files,Namespaces', file: 'build/logs/phploc.csv', inclusionFlag: 'INCLUDE_BY_STRING', url: '']], group: 'phploc', numBuilds: '100', style: 'line', title: 'B - Structures Containers', yaxis: 'Count'
-                plot csvFileName: 'plot-avg-length.csv', csvSeries: [[displayTableFlag: false, exclusionValues: 'Average Class Length (LLOC),Average Method Length (LLOC),Average Function Length (LLOC)', file: 'build/logs/phploc.csv', inclusionFlag: 'INCLUDE_BY_STRING', url: '']], group: 'phploc', numBuilds: '100', style: 'line', title: 'C - Average Length', yaxis: 'Average Lines of Code'
-                plot csvFileName: 'plot-complexity.csv', csvSeries: [[displayTableFlag: false, exclusionValues: 'Cyclomatic Complexity / Lines of Code,Cyclomatic Complexity / Number of Methods', file: 'build/logs/phploc.csv', inclusionFlag: 'INCLUDE_BY_STRING', url: '']], group: 'phploc', numBuilds: '100', style: 'line', title: 'D - Relative Cyclomatic Complexity', yaxis: 'Cyclomatic Complexity by Structure'
-                plot csvFileName: 'plot-classes.csv', csvSeries: [[displayTableFlag: false, exclusionValues: 'Classes,Abstract Classes,Concrete Classes', file: 'build/logs/phploc.csv', inclusionFlag: 'INCLUDE_BY_STRING', url: '']], group: 'phploc', numBuilds: '100', style: 'line', title: 'E - Types of Classes', yaxis: 'Count'
-                plot csvFileName: 'plot-methods.csv', csvSeries: [[displayTableFlag: false, exclusionValues: 'Methods,Non-Static Methods,Static Methods,Public Methods,Non-Public Methods', file: 'build/logs/phploc.csv', inclusionFlag: 'INCLUDE_BY_STRING', url: '']], group: 'phploc', numBuilds: '100', style: 'line', title: 'F - Types of Methods', yaxis: 'Count'
-                plot csvFileName: 'plot-constants.csv', csvSeries: [[displayTableFlag: false, exclusionValues: 'Constants,Global Constants,Class Constants', file: 'build/logs/phploc.csv', inclusionFlag: 'INCLUDE_BY_STRING', url: '']], group: 'phploc', numBuilds: '100', style: 'line', title: 'G - Types of Constants', yaxis: 'Count'
-                plot csvFileName: 'plot-testing.csv', csvSeries: [[displayTableFlag: false, exclusionValues: 'Test Classes,Test Methods', file: 'build/logs/phploc.csv', inclusionFlag: 'INCLUDE_BY_STRING', url: '']], group: 'phploc', numBuilds: '100', style: 'line', title: 'I - Testing', yaxis: 'Count'
-                plot csvFileName: 'plot-lloc.csv', csvSeries: [[displayTableFlag: false, exclusionValues: 'Logical Lines of Code (LLOC),Classes Length (LLOC),Functions Length (LLOC),LLOC outside functions or classes', file: 'build/logs/phploc.csv', inclusionFlag: 'INCLUDE_BY_STRING', url: '']], group: 'phploc', numBuilds: '100', style: 'line', title: 'AB - Code Structure by Logical Lines of Code', yaxis: 'Logical Lines of Code'
-                plot csvFileName: 'plot-functions.csv', csvSeries: [[displayTableFlag: false, exclusionValues: 'Functions,Named Functions,Anonymous Functions', file: 'build/logs/phploc.csv', inclusionFlag: 'INCLUDE_BY_STRING', url: '']], group: 'phploc', numBuilds: '100', style: 'line', title: 'H - Types of Functions', yaxis: 'Count'
-                plot csvFileName: 'plot-objects.csv', csvSeries: [[displayTableFlag: false, exclusionValues: 'Interfaces,Traits,Classes,Methods,Functions,Constants', file: 'build/logs/phploc.csv', inclusionFlag: 'INCLUDE_BY_STRING', url: '']], group: 'phploc', numBuilds: '100', style: 'line', title: 'BB - Structure Objects', yaxis: 'Count'
+                plot csvFileName: 'plot-loc.csv', csvSeries: [[
+                    displayTableFlag: false,
+                    exclusionValues: 'Lines of Code (LOC),Comment Lines of Code (CLOC),Non-Comment Lines of Code (NCLOC),Logical Lines of Code (LLOC)',
+                    file: 'build/logs/phploc.csv',
+                    inclusionFlag: 'INCLUDE_BY_STRING',
+                    url: ''
+                ]], group: 'phploc', numBuilds: '100', style: 'line', title: 'A - Lines of Code', yaxis: 'Lines of Code'
+                
+                plot csvFileName: 'plot-structures.csv', csvSeries: [[
+                    displayTableFlag: false,
+                    exclusionValues: 'Directories,Files,Namespaces',
+                    file: 'build/logs/phploc.csv',
+                    inclusionFlag: 'INCLUDE_BY_STRING',
+                    url: ''
+                ]], group: 'phploc', numBuilds: '100', style: 'line', title: 'B - Structures Containers', yaxis: 'Count'
+                
+                plot csvFileName: 'plot-avg-length.csv', csvSeries: [[
+                    displayTableFlag: false,
+                    exclusionValues: 'Average Class Length (LLOC),Average Method Length (LLOC),Average Function Length (LLOC)',
+                    file: 'build/logs/phploc.csv',
+                    inclusionFlag: 'INCLUDE_BY_STRING',
+                    url: ''
+                ]], group: 'phploc', numBuilds: '100', style: 'line', title: 'C - Average Length', yaxis: 'Average Lines of Code'
+                
+                plot csvFileName: 'plot-complexity.csv', csvSeries: [[
+                    displayTableFlag: false,
+                    exclusionValues: 'Cyclomatic Complexity / Lines of Code,Cyclomatic Complexity / Number of Methods',
+                    file: 'build/logs/phploc.csv',
+                    inclusionFlag: 'INCLUDE_BY_STRING',
+                    url: ''
+                ]], group: 'phploc', numBuilds: '100', style: 'line', title: 'D - Relative Cyclomatic Complexity', yaxis: 'Cyclomatic Complexity by Structure'
+                
+                plot csvFileName: 'plot-classes.csv', csvSeries: [[
+                    displayTableFlag: false,
+                    exclusionValues: 'Classes,Abstract Classes,Concrete Classes',
+                    file: 'build/logs/phploc.csv',
+                    inclusionFlag: 'INCLUDE_BY_STRING',
+                    url: ''
+                ]], group: 'phploc', numBuilds: '100', style: 'line', title: 'E - Types of Classes', yaxis: 'Count'
+                
+                plot csvFileName: 'plot-methods.csv', csvSeries: [[
+                    displayTableFlag: false,
+                    exclusionValues: 'Methods,Non-Static Methods,Static Methods,Public Methods,Non-Public Methods',
+                    file: 'build/logs/phploc.csv',
+                    inclusionFlag: 'INCLUDE_BY_STRING',
+                    url: ''
+                ]], group: 'phploc', numBuilds: '100', style: 'line', title: 'F - Types of Methods', yaxis: 'Count'
+                
+                plot csvFileName: 'plot-constants.csv', csvSeries: [[
+                    displayTableFlag: false,
+                    exclusionValues: 'Constants,Global Constants,Class Constants',
+                    file: 'build/logs/phploc.csv',
+                    inclusionFlag: 'INCLUDE_BY_STRING',
+                    url: ''
+                ]], group: 'phploc', numBuilds: '100', style: 'line', title: 'G - Types of Constants', yaxis: 'Count'
+                
+                plot csvFileName: 'plot-testing.csv', csvSeries: [[
+                    displayTableFlag: false,
+                    exclusionValues: 'Test Classes,Test Methods',
+                    file: 'build/logs/phploc.csv',
+                    inclusionFlag: 'INCLUDE_BY_STRING',
+                    url: ''
+                ]], group: 'phploc', numBuilds: '100', style: 'line', title: 'I - Testing', yaxis: 'Count'
+                
+                plot csvFileName: 'plot-lloc.csv', csvSeries: [[
+                    displayTableFlag: false,
+                    exclusionValues: 'Logical Lines of Code (LLOC),Classes Length (LLOC),Functions Length (LLOC),LLOC outside functions or classes',
+                    file: 'build/logs/phploc.csv',
+                    inclusionFlag: 'INCLUDE_BY_STRING',
+                    url: ''
+                ]], group: 'phploc', numBuilds: '100', style: 'line', title: 'AB - Code Structure by Logical Lines of Code', yaxis: 'Logical Lines of Code'
+                
+                plot csvFileName: 'plot-functions.csv', csvSeries: [[
+                    displayTableFlag: false,
+                    exclusionValues: 'Functions,Named Functions,Anonymous Functions',
+                    file: 'build/logs/phploc.csv',
+                    inclusionFlag: 'INCLUDE_BY_STRING',
+                    url: ''
+                ]], group: 'phploc', numBuilds: '100', style: 'line', title: 'H - Types of Functions', yaxis: 'Count'
+                
+                plot csvFileName: 'plot-objects.csv', csvSeries: [[
+                    displayTableFlag: false,
+                    exclusionValues: 'Interfaces,Traits,Classes,Methods,Functions,Constants',
+                    file: 'build/logs/phploc.csv',
+                    inclusionFlag: 'INCLUDE_BY_STRING',
+                    url: ''
+                ]], group: 'phploc', numBuilds: '100', style: 'line', title: 'BB - Structure Objects', yaxis: 'Count'
+            }
+        }
+
+        stage('SonarQube Quality Gate') {
+            when { branch pattern: "^develop*|^hotfix*|^release*|^main*", comparator: "REGEXP" }
+            environment {
+                scannerHome = tool 'SonarQubeScanner'
+            }
+            steps {
+                withSonarQubeEnv('sonarqube') {
+                    sh "${scannerHome}/bin/sonar-scanner"
+                }
+            }
+            post {
+                success {
+                    timeout(time: 1, unit: 'MINUTES') {
+                        waitForQualityGate abortPipeline: true
+                    }
+                }
+                failure {
+                    echo "SonarQube analysis failed"
+                    error("Pipeline aborted due to SonarQube quality gate failure")
+                }
             }
         }
 
@@ -83,23 +182,11 @@ pipeline {
             }
         }
 
-        stage('SonarQube Quality Gate') {
-            environment {
-                scannerHome = tool 'SonarQubeScanner'
-            }
-            steps {
-                withSonarQubeEnv('sonarqube') {
-                    sh "${scannerHome}/bin/sonar-scanner"
-                }
-
-        }
-    }
-
         stage('Deploy to Dev Environment') {
             steps {
                 build job: 'ansibllle-config-mgt/main', 
                 parameters: [
-                    [$class: 'StringParameterValue', name: 'inventory', value: 'dev'],
+                    [$class: 'StringParameterValue', name: 'inventory', value: 'dev']
                     // [$class: 'StringParameterValue', name: 'ansible_tags', value: 'deployment']
                 ], 
                 propagate: false, 
