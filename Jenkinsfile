@@ -16,7 +16,6 @@ pipeline {
 
         stage('Prepare Dependencies') {
             steps {
-                // sh 'mv .env.sample .env'
                 sh 'mkdir -p bootstrap/cache'
                 sh 'composer install'
                 sh 'php artisan migrate'
@@ -138,16 +137,8 @@ pipeline {
                 withSonarQubeEnv('sonarqube') {
                     sh "${scannerHome}/bin/sonar-scanner"
                 }
-            }
-            post {
-                success {
-                    timeout(time: 1, unit: 'MINUTES') {
-                        waitForQualityGate abortPipeline: true
-                    }
-                }
-                failure {
-                    echo "SonarQube analysis failed"
-                    error("Pipeline aborted due to SonarQube quality gate failure")
+                timeout(time: 1, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
                 }
             }
         }
@@ -187,7 +178,6 @@ pipeline {
                 build job: 'ansibllle-config-mgt/main', 
                 parameters: [
                     [$class: 'StringParameterValue', name: 'inventory', value: 'dev']
-                    // [$class: 'StringParameterValue', name: 'ansible_tags', value: 'deployment']
                 ], 
                 propagate: false, 
                 wait: true
