@@ -128,30 +128,20 @@ pipeline {
                 ]], group: 'phploc', numBuilds: '100', style: 'line', title: 'BB - Structure Objects', yaxis: 'Count'
             }
         }
-
-         stage('SonarQube Quality Gate') {
-            when { branch pattern: "^develop*|^hotfix*|^release*|^main*", comparator: "REGEXP" }
-            environment {
-                scannerHome = tool 'SonarQubeScanner'
-            }
-            steps {
-                withSonarQubeEnv('sonarqube') {
-                    sh "${scannerHome}/bin/sonar-scanner"
-                }
-            }
-            post {
-                success {
-                    timeout(time: 1, unit: 'MINUTES') {
-                        waitForQualityGate abortPipeline: true
+          stage('SonarQube Quality Gate') {
+                when { branch pattern: "^develop*|^hotfix*|^release*|^main*", comparator: "REGEXP"}
+                    environment {
+                        scannerHome = tool 'SonarQubeScanner'
+                    }
+                    steps {
+                        withSonarQubeEnv('sonarqube') {
+                            sh "${scannerHome}/bin/sonar-scanner -Dproject.settings=sonar-project.properties"
+                        }
+                        timeout(time: 1, unit: 'MINUTES') {
+                            waitForQualityGate abortPipeline: true
+                        }
                     }
                 }
-                failure {
-                    echo "SonarQube analysis failed"
-                    error("Pipeline aborted due to SonarQube quality gate failure")
-                }
-            }
-        }
-
 
         stage('Package Artifact') {
             steps {
