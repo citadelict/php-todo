@@ -11,6 +11,9 @@ pipeline {
         stage('Checkout SCM') {
             steps {
                 git branch: 'new-update', url: 'https://github.com/citadelict/php-todo.git'
+                script {
+                    env.REPO_URL = sh(returnStdout: true, script: 'git config --get remote.origin.url').trim()
+                }
             }
         }
 
@@ -129,7 +132,13 @@ pipeline {
         }
 
         stage('SonarQube Quality Gate') {
-            when { branch pattern: "^develop*|^hotfix*|^release*|^main*", comparator: "REGEXP" }
+            when {
+                expression {
+                    def branchName = env.BRANCH_NAME ?: sh(script: 'git rev-parse --abbrev-ref HEAD', returnStdout: true).trim()
+                    echo "Current branch: ${branchName}"
+                    return branchName ==~ /^(develop|hotfix|release|main|master)$/
+                }
+            }
             environment {
                 scannerHome = tool 'SonarQubeScanner'
             }
@@ -138,7 +147,15 @@ pipeline {
                     sh "${scannerHome}/bin/sonar-scanner"
                 }
                 timeout(time: 5, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
+                    script {
+                        def qg = waitForQualityGate()
+                        if (qg.status != 'OK') {
+                            echo "Quality Gate failed: ${qg.status}"
+                            error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                        } else {
+                            echo "Quality Gate passed: ${qg.status}"
+                        }
+                    }
                 }
             }
         }
@@ -175,6 +192,12 @@ pipeline {
 
         stage('Deploy to Dev Environment') {
             steps {
+                script {
+                    def allowedRepos = ['https://github.com/citadelict/php-todo.git', 'https://github.com/yourotherrepo.git']
+                    if (!allowedRepos.contains(env.REPO_URL)) {
+                        error "Deployment aborted: Unauthorized repository ${env.REPO_URL}"
+                    }
+                }
                 build job: 'ansibllle-config-mgt/main', 
                 parameters: [
                     [$class: 'StringParameterValue', name: 'inventory', value: 'dev']
