@@ -16,7 +16,6 @@ pipeline {
 
         stage('Prepare Dependencies') {
             steps {
-                // sh 'mv .env.sample .env'
                 sh 'mkdir -p bootstrap/cache'
                 sh 'composer install'
                 sh 'php artisan migrate'
@@ -128,21 +127,29 @@ pipeline {
                 ]], group: 'phploc', numBuilds: '100', style: 'line', title: 'BB - Structure Objects', yaxis: 'Count'
             }
         }
-          stage('SonarQube Quality Gate') {
-                when { branch pattern: "^develop*|^hotfix*|^release*|^main*", comparator: "REGEXP"}
-                    environment {
-                        scannerHome = tool 'SonarQubeScanner'
-                    }
-                    steps {
-                        withSonarQubeEnv('sonarqube') {
-                            sh "${scannerHome}/bin/sonar-scanner -Dproject.settings=sonar-project.properties"
+
+        stage('SonarQube Quality Gate') {
+            when { branch pattern: "^develop*|^hotfix*|^release*|^main*", comparator: "REGEXP" }
+            environment {
+                scannerHome = tool 'SonarQubeScanner'
+            }
+            steps {
+                withSonarQubeEnv('sonarqube') {
+                    sh "${scannerHome}/bin/sonar-scanner"
+                }
+                timeout(time: 5, unit: 'MINUTES') {
+                    script {
+                        def qg = waitForQualityGate()
+                        if (qg.status != 'OK') {
+                            echo "Quality Gate failed: ${qg.status}"
+                            error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                        } else {
+                            echo "Quality Gate passed: ${qg.status}"
                         }
-                         timeout(time: 5, unit: 'MINUTES') {
-                                waitForQualityGate abortPipeline: true
-                            }
-                                            
                     }
                 }
+            }
+        }
 
         stage('Package Artifact') {
             steps {
@@ -179,7 +186,6 @@ pipeline {
                 build job: 'ansibllle-config-mgt/main', 
                 parameters: [
                     [$class: 'StringParameterValue', name: 'inventory', value: 'dev']
-                    // [$class: 'StringParameterValue', name: 'ansible_tags', value: 'deployment']
                 ], 
                 propagate: false, 
                 wait: true
